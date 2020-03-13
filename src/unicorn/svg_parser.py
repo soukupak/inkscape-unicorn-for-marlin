@@ -20,6 +20,9 @@ def parseLengthWithUnits( str ):
   elif s[-1:] == '%':
     u = '%'
     s = s[:-1]
+  elif s[-2:] == 'mm':
+    u = 'mm'
+    s = s[:-2]
   try:
     v = float( s )
   except:
@@ -214,7 +217,7 @@ class SvgParser:
       if not v:
         # Couldn't parse the value
         return None
-      elif ( u == '' ) or ( u == 'px' ):
+      elif ( u == '' ) or ( u == 'mm' ):
         return v
       elif u == '%':
         return float( default ) * v / 100.0
@@ -226,10 +229,14 @@ class SvgParser:
       return float( default )
 
   def parse(self):
-    # 0.28222 scale determined by comparing pixels-per-mm in a default Inkscape file.
-    self.svgWidth = self.getLength('width', 354) * 0.28222
-    self.svgHeight = self.getLength('height', 354) * 0.28222
-    self.recursivelyTraverseSvg(self.svg, [[0.28222, 0.0, -(self.svgWidth/2.0)], [0.0, -0.28222, (self.svgHeight/2.0)]])
+    # This now should work with units set to mm
+    # 210 x 297 is A4 size in mm
+    self.svgWidth = self.getLength('width', 210)
+    self.svgHeight = self.getLength('height', 297)
+    # it seems that inkscape is using top left corner as origin (common in computer graphics)
+    # we however want standard mathematical origin in bottom left corner
+    # so we mirror our object about Y and trasnslate it by its height 
+    self.recursivelyTraverseSvg(self.svg, [[1.0, 0.0, 0.0], [0.0, -1.0, self.svgHeight]])
 
   # TODO: center this thing
   def recursivelyTraverseSvg(self, nodeList, 
