@@ -34,7 +34,7 @@ class GCodeContext:
 
       self.postscript = [
         "",
-		"(end of print job)",
+        "(end of print job)",
         "M400 (finish all movement)",
 		"M280 P0 S%0.2F (pen up)" % self.pen_up_angle,
 		"G4 P%d (wait %dms)" % (self.stop_delay, self.stop_delay),
