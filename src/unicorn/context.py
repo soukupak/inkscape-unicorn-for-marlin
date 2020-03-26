@@ -42,6 +42,7 @@ class GCodeContext:
         "G1 Z%0.2F F%0.2F (go up to finished level)" % (self.finished_height, self.z_feedrate),
         "G1 X%0.2F Y%0.2F F%0.2F (go home)" % (self.x_home, self.y_home, self.xy_feedrate),
         "M18 (drives off)",
+        "M280 P0 S%0.2F (pen up)" % self.pen_down_angle
       ]
 
       self.registration = [
