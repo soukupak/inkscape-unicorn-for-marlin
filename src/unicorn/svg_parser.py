@@ -1,7 +1,8 @@
-import inkex, cubicsuperpath, simplepath, simplestyle, cspsubdiv
+import inkex
 from simpletransform import *
 from bezmisc import *
-import entities
+from lxml import etree
+import unicorn.entities as entities
 from math import radians
 import sys, pprint
 
@@ -51,12 +52,12 @@ def subdivideCubicPath( sp, flat, i=1 ):
 
       b = ( p0, p1, p2, p3 )
 
-      if cspsubdiv.maxdist( b ) > flat:
+      if inkex.bezier.maxdist(b) > flat:
         break
 
       i += 1
 
-    one, two = beziersplitatt( b, 0.5 )
+    one, two = inkex.bezier.beziersplitatt( b, 0.5 )
     sp[i - 1][2] = one[1]
     sp[i][0] = two[2]
     p = [one[2], one[3], two[1]]
@@ -75,15 +76,17 @@ class SvgIgnoredEntity:
 class SvgPath(entities.PolyLine):
   def load(self, node, mat):
     d = node.get('d')
-    if len(simplepath.parsePath(d)) == 0:
+
+    if(len(d) == 0):
       return
-    p = cubicsuperpath.parsePath(d)
-    applyTransformToPath(mat, p)
+
+    p = inkex.Path.to_superpath(d)
+    p_transformed = p.transform(mat)
 
     # p is now a list of lists of cubic beziers [ctrl p1, ctrl p2, endpoint]
     # where the start-point is the last point in the previous segment
     self.segments = []
-    for sp in p:
+    for sp in p_transformed:
       points = []
       subdivideCubicPath(sp,0.2)  # TODO: smoothness preference
       for csp in sp:
@@ -91,7 +94,7 @@ class SvgPath(entities.PolyLine):
       self.segments.append(points)
 
   def new_path_from_node(self, node):
-    newpath = inkex.etree.Element(inkex.addNS('path','svg'))
+    newpath = etree.Element(inkex.addNS('path','svg'))
     s = node.get('style')
     if s:
       newpath.set('style',s)
@@ -113,7 +116,7 @@ class SvgRect(SvgPath):
     a.append([' l ', [0,h]])
     a.append([' l ', [-w,0]])
     a.append([' Z', []])
-    newpath.set('d', simplepath.formatPath(a))
+    newpath.set('d', formatPath(a))
     SvgPath.load(self,newpath,mat)
 
 class SvgLine(SvgPath):
@@ -126,7 +129,7 @@ class SvgLine(SvgPath):
     a = []
     a.append(['M ', [x1,y1]])
     a.append([' L ', [x2,y2]])
-    newpath.set('d', simplepath.formatPath(a))
+    newpath.set('d', formatPath(a))
     SvgPath.load(self,newpath,mat)
 
 class SvgPolyLine(SvgPath):
@@ -264,7 +267,8 @@ class SvgParser:
         pass
 
       # first apply the current matrix transform to this node's transform
-      matNew = composeTransform(matCurrent, parseTransform(node.get("transform")))
+      # matNew = composeTransform(matCurrent, parseTransform(node.get("transform")))
+      matNew = inkex.Transform(matCurrent) * inkex.Transform(node.get("transform"))
 
       if node.tag == inkex.addNS('g','svg') or node.tag == 'g':
         if (node.get(inkex.addNS('groupmode','inkscape')) == 'layer'):
@@ -283,7 +287,7 @@ class SvgParser:
             y = float(node.get('y','0'))
             # Note: the transform has already been applied
             if (x!=0) or (y!=0):
-              matNew2 = composeTransform(matNew,parseTransform('translate(%f,%f)' % (x,y)))
+              matNew2 = inkex.Transform(matNew) * inkex.Transform.add_translate(x,y)
             else:
               matNew2 = matNew
             v = node.get('visibility',v)
@@ -292,7 +296,7 @@ class SvgParser:
             pass
         else:
           pass
-      elif not isinstance(node.tag, basestring):
+      elif not isinstance(node.tag, str):
         pass
       else:
         entity = self.make_entity(node, matNew)
@@ -313,3 +317,7 @@ class SvgParser:
         self.entities.append(entity)
         return entity
     return None
+
+def formatPath(a):
+    """Format SVG path data from an array"""
+    return "".join([cmd + " ".join([str(p) for p in params]) for cmd, params in a])

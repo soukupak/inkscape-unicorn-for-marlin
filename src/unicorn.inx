@@ -49,18 +49,18 @@ Note: Double-check the orientation of your axes when changing these values!</_pa
 - All text must be converted to paths.
 - Curves are approximated with line segments.
 
-More Info: http://github.com/martymcguire/inkscape-unicorn/</_param>
+More Info: https://github.com/soukupak/inkscape-unicorn-for-marlin</_param>
     </page>
   </param>
 
   <output>
     <extension>.gcode</extension>
     <mimetype>application/x-gcode</mimetype>
-    <_filetypename>MakerBot Unicorn G-Code (*.gcode)</_filetypename>
-    <_filetypetooltip>Toolpath for the MakerBot Unicorn Pen Plotter</_filetypetooltip>
+    <_filetypename>Marlin G-Code (*.gcode)</_filetypename>
+    <_filetypetooltip>Toolpath for marlin based pen plotter</_filetypetooltip>
     <dataloss>true</dataloss>
   </output>
   <script>
-    <command reldir="extensions" interpreter="python">unicorn.py</command>
+    <command location="inx" interpreter="python">unicorn.py</command>
   </script>
 </inkscape-extension>

@@ -1,7 +1,12 @@
 from math import cos, sin, radians
 import pprint
+import warnings
 
 class Entity:
+	def __getattr__(self, name):
+		''' will only get called for undefined attributes '''
+		warnings.warn('No member "%s" contained in settings config.' % name)
+		return ''
 	def get_gcode(self,context):
 		#raise NotImplementedError()
 		return "NIE"
@@ -86,4 +91,3 @@ class PolyLine(Entity):
 					context.last = point
 				context.stop()
 				context.codes.append("")
-
