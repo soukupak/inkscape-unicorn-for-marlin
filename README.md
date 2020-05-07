@@ -3,6 +3,8 @@ Marlin G-Code Output for Inkscape
 
 Notice
 ------
+**Now works with Inkscape 1.0!**
+**There is also version for older Inkscape, check releases.**
 
 **I tested it with version Inkscape 0.92 with document units set to mm and it seems to work, no other configuration is tested**
 
