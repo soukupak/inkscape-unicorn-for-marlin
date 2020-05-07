@@ -49,7 +49,7 @@ Usage
 	* Choose **Path | Object to Path**.
 * Save as G-Code:
 	* **File | Save a Copy**.
-	* Select **MakerBot Unicorn G-Code (\*.gcode)**.
+	* Select **Marlin G-Code (\*.gcode)**.
 	* Save your file.
 * Preview
 	* Simple web viewer: [GCode Viewer](http://jherrm.com/gcode-viewer/)
