@@ -238,7 +238,7 @@ class SvgParser:
     self.svgHeight = self.getLength('height', 297)
     # it seems that inkscape is using top left corner as origin (common in computer graphics)
     # we however want standard mathematical origin in bottom left corner
-    # so we mirror our object about Y and trasnslate it by its height 
+    # so we mirror our object around Y and trasnslate it by its height 
     self.recursivelyTraverseSvg(self.svg, [[1.0, 0.0, 0.0], [0.0, -1.0, self.svgHeight]])
 
   # TODO: center this thing
@@ -267,8 +267,7 @@ class SvgParser:
         pass
 
       # first apply the current matrix transform to this node's transform
-      # matNew = composeTransform(matCurrent, parseTransform(node.get("transform")))
-      matNew = inkex.Transform(matCurrent) * inkex.Transform(node.get("transform"))
+      matNew = inkex.Transform(matCurrent) @ inkex.Transform(node.get("transform"))
 
       if node.tag == inkex.addNS('g','svg') or node.tag == 'g':
         if (node.get(inkex.addNS('groupmode','inkscape')) == 'layer'):
