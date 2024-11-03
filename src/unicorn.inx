@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-  <_name>MakerBot Unicorn G-Code Output</_name>
-  <id>com.makerbot.unicorn.gcode</id>
-  <dependency type="extension">org.inkscape.output.svg.inkscape</dependency>
-  <dependency type="executable" location="extensions">unicorn.py</dependency>
-  <dependency type="executable" location="extensions">inkex.py</dependency>
+  <_name>Marlin based plotter G-Code Output</_name>
+  <id>com.soukupak.gcode</id>
   <param name="tab" type="notebook">
     <page name="plotter_setup" _gui-text="Setup">
       <param name="pen-up-angle" type="float" min="0.0" max="180.0" _gui-text="Pen Up Angle">50</param>

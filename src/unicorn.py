@@ -16,14 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '''
-import sys,os
 import inkex
 from math import *
-import getopt
 from unicorn.context import GCodeContext
 from unicorn.svg_parser import SvgParser
-
-#self.arg_parser.add_argument
 
 class MyEffect(inkex.Effect):
   def __init__(self):
@@ -88,11 +84,6 @@ class MyEffect(inkex.Effect):
     
     self.context.generate()
     MyEffect.save_raw(self, self.context.generate())
-
-    #self.save_raw(self, self.context.generate())
-
-  # def output(self):
-  #   self.context.generate()
 
 
 if __name__ == '__main__':   #pragma: no cover
