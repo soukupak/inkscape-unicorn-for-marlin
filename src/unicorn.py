@@ -82,7 +82,6 @@ class MyEffect(inkex.Effect):
     for entity in parser.entities:
       entity.get_gcode(self.context)
     
-    self.context.generate()
     MyEffect.save_raw(self, self.context.generate())
 
 
