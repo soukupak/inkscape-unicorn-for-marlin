@@ -48,6 +48,7 @@ Usage
 * Convert all text to paths:
 	* Select all text objects.
 	* Choose **Path | Object to Path**.
+	* In order for sorting to work, larger paths must be broken down into components using **Path | Break Apart**
 * Save as G-Code:
 	* **File | Save a Copy**.
 	* Select **Marlin G-Code (\*.gcode)**.
