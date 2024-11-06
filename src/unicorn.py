@@ -20,6 +20,7 @@ import inkex
 from math import *
 from unicorn.context import GCodeContext
 from unicorn.svg_parser import SvgParser
+from py2opt.routefinder import RouteFinder
 
 class MyEffect(inkex.Effect):
   def __init__(self):
@@ -79,8 +80,21 @@ class MyEffect(inkex.Effect):
                            self.options.input_file)
     parser = SvgParser(self.document.getroot(), self.options.pause_on_layer_change)
     parser.parse()
-    for entity in parser.entities:
-      entity.get_gcode(self.context)
+    
+    inkex.utils.debug(len(parser.entities))
+
+
+    if len(parser.entities) > 1:
+      distance_matrix = parser.get_distance_matrix()
+
+      route_finder = RouteFinder(distance_matrix, parser.entities, iterations=5)
+      best_distance, best_route = route_finder.solve()
+
+      for entity in best_route:
+        entity.get_gcode(self.context)
+    else:
+      for entity in parser.entities:
+        entity.get_gcode(self.context)
     
     MyEffect.save_raw(self, self.context.generate())
 

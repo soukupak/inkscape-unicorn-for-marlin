@@ -1,12 +1,22 @@
-from math import cos, sin, radians
+from math import cos, sin, radians, sqrt, pow
 import pprint
 import warnings
+import inkex
 
 class Entity:
 	def __getattr__(self, name):
 		''' will only get called for undefined attributes '''
 		warnings.warn('No member "%s" contained in settings config.' % name)
 		return ''
+	
+	def get_starting_point(self):
+		return "NIE"
+	
+	def distance(self, Entity):
+		point_1 = self.get_starting_point()
+		point_2 = Entity.get_starting_point()
+		return sqrt(pow(point_2[0] - point_1[0], 2) + pow(point_2[1] - point_1[1], 2))
+
 	def get_gcode(self,context):
 		#raise NotImplementedError()
 		return "NIE"
@@ -14,6 +24,10 @@ class Entity:
 class Line(Entity):
 	def __str__(self):
 		return "Line from [%.2f, %.2f] to [%.2f, %.2f]" % (self.start[0], self.start[1], self.end[0], self.end[1])
+	
+	def get_starting_point(self):
+		return self.start
+
 	def get_gcode(self,context):
 		"Emit gcode for drawing line"
 		context.codes.append("(" + str(self) + ")")
@@ -24,6 +38,10 @@ class Line(Entity):
 class Circle(Entity):
 	def __str__(self):
 		return "Circle at [%.2f,%.2f], radius %.2f" % (self.center[0], self.center[1], self.radius)
+	
+	def get_starting_point(self):
+		return (self.center[0] - self.radius, self.center[1])
+
 	def get_gcode(self,context):
 		"Emit gcode for drawing arc"
 		start = (self.center[0] - self.radius, self.center[1])
@@ -39,6 +57,9 @@ class Circle(Entity):
 class Arc(Entity):
 	def __str__(self):
 		return "Arc at [%.2f, %.2f], radius %.2f, from %.2f to %.2f" % (self.center[0], self.center[1], self.radius, self.start_angle, self.end_angle)
+	
+	def get_starting_point(self):
+		return self.find_point(0)
 
 	def find_point(self,proportion):
 		"Find point at the given proportion along the arc."
@@ -76,6 +97,12 @@ class Ellipse(Entity):
 class PolyLine(Entity):
 	def __str__(self):
 		return "Polyline consisting of %d segments." % len(self.segments)
+
+	def get_starting_point(self):
+		if hasattr(self, 'segments'):
+			return self.segments[0][0]
+		else:
+			return None
 
 	def get_gcode(self,context):
 		"Emit gcode for drawing polyline"

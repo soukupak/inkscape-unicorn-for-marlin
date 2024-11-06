@@ -312,10 +312,23 @@ class SvgParser:
       if node.tag == inkex.addNS(tag,ns) or node.tag == tag:
         constructor = SvgParser.entity_map[nodetype]
         entity = constructor()
-        entity.load(node,mat)
-        self.entities.append(entity)
+        if not type(entity).__name__ == "SvgIgnoredEntity":
+          entity.load(node,mat)
+          self.entities.append(entity)
         return entity
     return None
+  
+  def get_distance_matrix(self):
+    ent_len = len(self.entities)
+    distances = []
+
+    for i in range(ent_len):
+      ent_i_distances = []
+      for j in range(ent_len):
+        ent_i_distances.append(self.entities[i].distance(self.entities[j]))
+      distances.append(ent_i_distances)
+
+    return distances
 
 def formatPath(a):
     """Format SVG path data from an array"""
